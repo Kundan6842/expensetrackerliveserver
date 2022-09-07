@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Book a Call</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <form onsubmit="saveToLocalStorage(event)">
+      <label> choose expenseamount</label>
+      <input type="number" id="amount" required />
+      <label> choose description</label>
+      <input type="text" id="description" required />
+      <label> choose a category</label>
+      <input type="tel" id="category" />
+      <button>Add Expense</button>
+    </form>
+    <ul id="listOfUsers"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+
+    <script>
+      function saveToLocalStorage(event) {
+        event.preventDefault();
+        const amount = event.target.amount.value;
+        const description = event.target.description.value;
+        const category = event.target.category.value;
+        // localStorage.setItem('name', name);
+        // localStorage.setItem('email', email);
+        // localStorage.setItem('phonenumber', phonenumber)
+        const obj = {
+          amount,
+          description,
+          category,
+        };
+        axios
+          .post(
+            "https://crudcrud.com/api/8f7b1c9abeb94191af9e6804b0320d34/appointmentData",
+            obj
+          )
+          .then((response) => {
+            showNewUserOnScreen(response.data);
+            console.log(response);
+          })
+          .catch((err) => {
+            console.log(error);
+          });
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        axios
+          .get(
+            "https://crudcrud.com/api/8f7b1c9abeb94191af9e6804b0320d34/appointmentdata"
+          )
+          .then((response) => {
+            console.log(response);
+            for (var i = 0; i < response.data.length; i++) {
+              showNewUserOnScreen(response.data[i]);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        // const localStorageObj = localStorage;
+        // const localstoragekeys = Object.keys(localStorageObj);
+
+        // for (var i = 0; i < localstoragekeys.length; i++) {
+        //   const key = localstoragekeys[i];
+        //   const userDetailsString = localStorageObj[key];
+        //   const userDetailsObj = JSON.parse(userDetailsString);
+        //   showNewUserOnScreen(userDetailsObj);
+      });
+
+      function showNewUserOnScreen(user) {
+        const parentNode = document.getElementById("listOfUsers");
+        const childHTML = `<li id=${user._id}> ${user.amount} - ${user.description} - ${user.category}
+                          <button onclick=deleteUser('${user._id}')> Delete User </button>
+                          <button onclick=editUser('${user.description}','${user.amount}','${user.category}',${user._id})> edit user </button>
+                       </li>`;
+
+        parentNode.innerHTML = parentNode.innerHTML + childHTML;
+      }
+
+      // deleteUser('abc@gmail.com')
+
+      function deleteUser(userId) {
+        axios
+          .delete(
+            `https://crudcrud.com/api/8f7b1c9abeb94191af9e6804b0320d34/appointmentData/${userId}`
+          )
+          .then((response) => {
+            removeUserFromScreen(user._id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        // console.log(emailId);
+        // localStorage.removeItem(emailId);
+        // removeUserFromScreen(emailId);
+      }
+
+      function removeUserFromScreen(userId) {
+        const parentNode = document.getElementById("listOfUsers");
+        const childNodeToBeDeleted = document.getElementById(userid);
+
+        parentNode.removeChild(childNodeToBeDeleted);
+      }
+
+      function editUser(description, amount, category, userId) {
+        document.getElementById("description").value = email;
+        document.getElementById("amount").value = name;
+        document.getElementById("category").value = phonenumber;
+        deleteUser(userId);
+      }
+    </script>
+  </body>
+</html>
